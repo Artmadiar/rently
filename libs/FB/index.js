@@ -16,19 +16,19 @@ module.exports = class FB {
       method: 'GET',
       uri: this.settings.group.url,
       resolveWithFullResponse: true,
-      simple: false
+      simple: false,
     })
     .then((response) => {
       if (response.statusCode !== 200) {
         return Promise.resolve({ success: false, status: response.statusCode });
       }
-    
+
       const data = JSON.parse(response.body);
       return Promise.resolve(data);
     })
-    .catch(function (err) {
-        // Crawling failed... 
-    });    
+    .catch(err => {
+        // Crawling failed...
+    });
   }
 
-}
+};
