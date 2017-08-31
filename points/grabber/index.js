@@ -1,18 +1,23 @@
 require('dotenv').config();
 const FB = require('../../libs/FB');
-const db = require('../../models');
+const db = require('../../models')();
 
-const group = new FB({ groupId: 762748437151329 });
-
-group
-.feed({
+const params = {
   until: {
     // postId: ,
     // date: , or // days: ,
     // count: 50
   }
-})
-.then((feed) => {
+};
 
+db.grabSource.findAll()
+.then((sources) => {
+  const groups = sources.map(source => new FB({ groupId: source.exId }));
+  return Promise.all(groups.map(group => group.feed(params)));
+})
+.then((feeds) => {
+  feeds.forEach((feed) => {
+    console.log(feed);
+  });
 })
 .catch(err => console.error(err));

@@ -31,13 +31,13 @@ module.exports = () => {
     },
     logging: (process.env.DB_LOGGING === 'true') ? console.log : null,
     pool: {
-      maxConnections: process.env.DB_POOL_SIZE,
-      max: process.env.DB_POOL_SIZE,
+      // maxConnections: process.env.DB_POOL_SIZE,
+      // max: process.env.DB_POOL_SIZE,
       minConnections: 1,
       min: 1
     },
     define: {
-      timestamps: false
+      timestamps: true
     }
   });
 
