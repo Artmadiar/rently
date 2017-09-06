@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const contentType = require('../middlewares/contentTypeValidator');
 const db = require('../../../models');
 const apiRouter = require('./api');
-// const websiteRouter = require('./websiteRouter');
+const backofficeRouter = require('./backoffice');
 
 router.use(bodyParser.json({ limit: '10mb' }));
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +18,10 @@ router.use('/', (req, res, next) => {
   return next();
 });
 
-// router.use('/', websiteRouter);
+// redirect
+router.get('/', (req, res) => res.redirect(`${req.baseUrl}/backoffice/search`));
+
+router.use('/backoffice', backofficeRouter);
 router.use('/api', apiRouter);
 
 

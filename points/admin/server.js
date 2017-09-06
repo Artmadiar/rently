@@ -5,7 +5,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 if (process.env.NODE_ENV !== 'production') {
-  dotenv.load({ path: path.join(__dirname, '/../.env') });
+  dotenv.load({ path: path.join(__dirname, '/../../.env') });
 }
 
 
@@ -76,27 +76,5 @@ app.listen(app.get('port'), () => {
   console.log('[RUNNING] PORT: %d MODE: %s TIME: %s', app.get('port'), app.get('env'), Date());
 });
 
-
-/**
- * Logs stream
- */
-const server = require('http').Server();
-const passport = require('../../libs/auth/passportLocal');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
-const db = require('../../models');
-
-const redisStoreConfig = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  prefix: process.env.REDIS_PREFIX,
-  logErrors: true,
-};
-
-passport.passport.initialize();
-passport.passport.session();
-
-server.listen(9090);
 
 module.exports = app;

@@ -11,7 +11,7 @@ db.user.findAll()
 .then((users) => {
   if (users.length === 0) {
     return db.user.create({
-      name: 'admin',
+      username: 'admin',
       email,
       phone: '+420',
       firstName: 'admin',

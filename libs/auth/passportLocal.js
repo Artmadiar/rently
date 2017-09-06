@@ -13,11 +13,11 @@ passport.deserializeUser((req, id, done) => {
 });
 
 passport.use(new LocalStrategy({
-  usernameField: 'name',
+  usernameField: 'username',
   passwordField: 'password',
   passReqToCallback: true },
   (req, username, password, done) => {
-    req.db.user.findOne({ where: { name: username } }).then((user) => {
+    req.db.user.findOne({ where: { username } }).then((user) => {
       if (!user) {
         return done(null, false, { msg: 'Invalid user or password.' });
       }

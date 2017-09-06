@@ -1,5 +1,5 @@
-# HPC Web
-> Holmes Place cloud platform
+# Web
+> Rently back office side
 
 ## Getting started
 
@@ -7,7 +7,7 @@
 
 * any DB supported by [sequelizerjs]('http://docs.sequelizejs.com/en/v3/')
 * redis used as a session storage
-* node.js (at least version 6.3)
+* node.js (at least version 6.9)
 
 ### Configuration
 
@@ -27,4 +27,4 @@ npm start
 
 ### Notes
 
-* project started from [hackathon-starter]('https://github.com/sahat/hackathon-starter') 
+* project started from [hackathon-starter]('https://github.com/sahat/hackathon-starter')
