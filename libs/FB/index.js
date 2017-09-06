@@ -1,6 +1,8 @@
 const moment = require('moment');
 const rp = require('request-promise');
 const fbUrlConstructor = require('./fbUrlConstructor');
+const ExtUser = require('./extUser');
+const Post = require('./post');
 
 module.exports = class FB {
   /**
@@ -10,8 +12,9 @@ module.exports = class FB {
    * {
    *    groupId: int,
    *    db: DB connection,
+   *    store: bool,        // store the posts after feed() or not. default - false
    *    until: {
-   *      [max]: int,       // until max count of the posts get the feed
+   *      [max]: int,       // until max count of the posts get the feed. default - 50
    *      [date]: Date      // until which date of the posts get the feed
    *      [days]: int       // until which date of the posts from now get the feed
    *      [postId]: string  // until which post id get the feed
@@ -27,12 +30,32 @@ module.exports = class FB {
       throw new Error('DB Connection is required param');
     }
 
+    // ID of group
     this.groupId = params.groupId;
+    // DB connection
     this.db = params.db;
 
+    // current url of page of feed
     this.currentUrl = fbUrlConstructor(params);
+    // success of request to fb
     this.success = undefined;
+    // clear posts
     this.posts = [];
+    // rejected posts after clear
+    this.rejectedPosts = [];
+
+    // store
+    this.store = false;
+    if (params.store) {
+      this.store = params.store;
+    }
+
+    // white dictionary
+    this.whiteDictionary = [];
+
+    if (params.whiteDictionary) {
+      this.whiteDictionary = params.whiteDictionary;
+    }
 
     // until
     if (!params.until) {
@@ -44,7 +67,7 @@ module.exports = class FB {
     // until options
     // days to date
     if (params.until.days !== undefined) {
-      this.until.date = moment().add(params.until.days, 'days');
+      this.until.date = moment().add(params.until.days, 'days').toDate();
     }
   }
 
@@ -115,7 +138,7 @@ module.exports = class FB {
       }
     }
 
-    return Promise.resolve(this);
+    return this.clearFeed();
   }
 
   /**
@@ -123,23 +146,53 @@ module.exports = class FB {
    *
    * @return Promise - promise of this object with promise chain of the removing posts
    */
-  filter() {
+  clearFeed() {
     if (this.posts.length === 0) {
       return Promise.resolve(this);
     }
 
-    return this.db.whiteWord.findAll()
-    .then((words) => {
-      console.log(words.length);
-    });
+    if (!this.whiteDictionary || this.whiteDictionary.length === 0) {
+      throw new Error('White dictionary is empty!');
+    }
+
+    // make new array of posts. clear posts
+    this.posts = this.posts.reduce((result, post) => {
+      // does it have any word from white dictionary
+      const itHas = this.whiteDictionary.some(word => (post.message.indexOf(word) > 0));
+      // if it is - add to new array
+      if (itHas) {
+        return result.concat(post);
+      }
+      // otherwise add this post to array 'rejected posts'
+      this.rejectedPosts.push(post);
+
+      return result;
+    }, []);
+
+    if (!this.store) {
+      return Promise.resolve(this);
+    }
+
+    return this.saveToDB();
   }
 
   /**
-   * Store posts to db
+   * Save posts to db
    */
-  storeToDataBase() {
+  saveToDB() {
     if (this.posts.length === 0) {
       return Promise.resolve(this);
     }
+
+    // save extUsers
+    const extUsers = this.posts.map((post) => new ExtUser(this.db, post.from));
+    return Promise.all(extUsers.map(extUser => extUser.save()))
+      .then((users) => {
+        // save posts
+        const posts = this.posts.map(post => new Post(this.db, post));
+        return Promise.all(posts.map(post => post.save()));
+      })
+      // return this object
+      .then(posts => Promise.resolve(this));
   }
 };

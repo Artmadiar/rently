@@ -16,7 +16,7 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false
     },
-    exId: {
+    extId: {
       type: Sequelize.STRING,
       allowNull: false
     },

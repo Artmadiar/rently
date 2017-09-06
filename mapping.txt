@@ -1,10 +1,10 @@
 {
-  exId: id,
+  extId: id,
   exCreatedTime: ,
   exUpdatedTime: updated_time,
   type: type,
   text: message,
-  authorExId: from.id,
+  authorExtId: from.id,
   authorExName: from.name,
   originText: JSON.stringify(),
   link: link permalink_url,
