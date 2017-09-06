@@ -56,7 +56,7 @@ module.exports = class Attachment {
    */
   save() {
     return this.db.postAttachment.findOne({
-      where: { postId: this.postId, src: this.stc },
+      where: { postId: this.postId, src: this.src },
     })
     .then((attachment) => {
       if (!attachment) {

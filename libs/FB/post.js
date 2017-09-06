@@ -31,6 +31,7 @@ module.exports = class FBPost {
     this.attachments = [];
 
     this.source = 'fb';
+    this.status = 'open';
     this.extId = post.id;
     this.extCreatedTime = moment(post.created_time).toDate();
     this.extUpdatedTime = moment(post.updated_time).toDate();
@@ -42,6 +43,11 @@ module.exports = class FBPost {
     this.originText = JSON.stringify(post);
   }
 
+  /**
+   * Get attachments and save this post with attachments
+   *
+   * @return {Promise} promise of this object with chain
+   */
   save() {
     const findPost = this.db.post.findOne({
       where: { source: 'fb', extId: this.extId },
@@ -55,6 +61,7 @@ module.exports = class FBPost {
       if (!post) {
         return this.db.post.create({
           source: this.source,
+          status: this.status,
           extId: this.extId,
           extCreatedTime: this.extCreatedTime,
           extUpdatedTime: this.extUpdatedTime,
@@ -74,6 +81,7 @@ module.exports = class FBPost {
       this.new = false;
       return this.getAttachments();
     })
+    .then(() => this.saveAttachments())
     .then(() => Promise.resolve(this))
     .catch(err => console.error(err));
   }
@@ -106,10 +114,20 @@ module.exports = class FBPost {
       if (!subattachments || !subattachments.data || subattachments.data.length === 0) {
         return Promise.resolve(this);
       }
-      const attachments = subattachments.data.map(subattachment => new Attachment(this.db, this.id, subattachment));
-      return Promise.all(attachments.map(attachment => attachment.save()));
+      this.attachments = subattachments.data.map(subattachment => new Attachment(this.db, this.id, subattachment));
+      return Promise.resolve(this);
     })
-    .then(() => Promise.resolve(this))
     .catch(err => console.error(err));
+  }
+
+  /**
+   * Save attachments to db
+   */
+  saveAttachments() {
+    if (this.attachments.length === 0) {
+      return Promise.resolve(this);
+    }
+    return Promise.all(this.attachments.map(attachment => attachment.save()))
+      .then(() => Promise.resolve(this));
   }
 };
