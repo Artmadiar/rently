@@ -59,6 +59,11 @@ module.exports = () => {
   db.Sequelize = Sequelize;
 
   // Associations
+  db.extUser.hasMany(db.post);
+  db.post.belongsTo(db.extUser);
+
+  db.post.hasMany(db.postAttachment);
+  db.postAttachment.belongsTo(db.post);
 
   db.sequelize.sync().catch((err) => {
     throw err;
