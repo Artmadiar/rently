@@ -1,4 +1,7 @@
 const moment = require('moment');
+const rp = require('request-promise');
+const fbUrlConstructor = require('./fbUrlConstructor');
+const Attachment = require('./attachment');
 
 module.exports = class FBPost {
   /**
@@ -17,8 +20,15 @@ module.exports = class FBPost {
 
     this.id = 0;
     this.new = true;
-    
+
+    // db connection
     this.db = db;
+
+    // success of the request
+    this.success = undefined;
+
+    // attachments
+    this.attachments = [];
 
     this.source = 'fb';
     this.extId = post.id;
@@ -62,8 +72,44 @@ module.exports = class FBPost {
     .then((post) => {
       this.id = post.id;
       this.new = false;
-      return Promise.resolve(this);
+      return this.getAttachments();
     })
+    .then(() => Promise.resolve(this))
+    .catch(err => console.error(err));
+  }
+
+    /**
+   * Download attachments of the post
+   * @return [Promise]  chain of the requests to get the attachments
+   */
+  getAttachments() {
+    const uri = fbUrlConstructor.postAttachments({ postId: this.extId });
+    return rp({
+      method: 'GET',
+      uri,
+      resolveWithFullResponse: true,
+      simple: false,
+    })
+    .then((response) => {
+      if (response.statusCode !== 200) {
+        // set the success of request
+        this.success = false;
+        return Promise.resolve(this);
+      }
+
+      // set the success of request
+      this.success = true;
+
+      // parse the response
+      const body = JSON.parse(response.body);
+      const subattachments = body.data.length === 0 ? {} : body.data[0].subattachments;
+      if (!subattachments || !subattachments.data || subattachments.data.length === 0) {
+        return Promise.resolve(this);
+      }
+      const attachments = subattachments.data.map(subattachment => new Attachment(this.db, this.id, subattachment));
+      return Promise.all(attachments.map(attachment => attachment.save()));
+    })
+    .then(() => Promise.resolve(this))
     .catch(err => console.error(err));
   }
 };

@@ -14,6 +14,10 @@ module.exports = function (sequelize, DataTypes) {
         key: 'id'
       }
     },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     url: {
       type: DataTypes.STRING,
       allowNull: false
@@ -29,6 +33,10 @@ module.exports = function (sequelize, DataTypes) {
     width: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    originText: {
+      type: DataTypes.TEXT,
+      allowNull: false
     },
   }, {
     tableName: 'postAttachment',

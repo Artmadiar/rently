@@ -36,7 +36,7 @@ module.exports = class FB {
     this.db = params.db;
 
     // current url of page of feed
-    this.currentUrl = fbUrlConstructor(params);
+    this.currentUrl = fbUrlConstructor.group(params);
     // success of request to fb
     this.success = undefined;
     // clear posts

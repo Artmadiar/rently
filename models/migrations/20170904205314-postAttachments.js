@@ -16,6 +16,10 @@ module.exports = {
         key: 'id'
       }
     },
+    type: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
     url: {
       type: Sequelize.STRING,
       allowNull: false
@@ -31,6 +35,10 @@ module.exports = {
     width: {
       type: Sequelize.INTEGER,
       allowNull: true
+    },
+    originText: {
+      type: Sequelize.TEXT,
+      allowNull: false
     },
     createdAt: {
       type: Sequelize.DATE,
