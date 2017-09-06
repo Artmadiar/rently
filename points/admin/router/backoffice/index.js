@@ -43,8 +43,7 @@ router.use((req, res, next) => {
  * Controllers
  */
 const userCtrl = require('./user');
-const searchCtrl = require('./search');
-const detailCtrl = require('./detail');
+const postCtrl = require('./post');
 
 /**
  * Backoffice routes
@@ -61,14 +60,11 @@ router.use((req, res, next) => {
 // only authorized
 router.use(auth.isAuthenticated);
 
+router.use('/posts', postCtrl);
 router.get('/logout', userCtrl.logout);
 
-router.get('/search', searchCtrl.getSearch);
-
-router.use('/detail', detailCtrl);
-
 // redirect
-router.get('/', (req, res) => res.redirect(`${req.baseUrl}/search`));
+router.get('/', (req, res) => res.redirect(`${req.baseUrl}/posts`));
 
 router.get('*', (req, res) => {
   res.status(404).send('Not Found');

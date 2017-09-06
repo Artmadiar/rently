@@ -19,7 +19,7 @@ router.use('/', (req, res, next) => {
 });
 
 // redirect
-router.get('/', (req, res) => res.redirect(`${req.baseUrl}/backoffice/search`));
+router.get('/', (req, res) => res.redirect(`${req.baseUrl}/backoffice`));
 
 router.use('/backoffice', backofficeRouter);
 router.use('/api', apiRouter);

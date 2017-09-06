@@ -48,6 +48,6 @@ exports.postLogin = (req, res, next) => {
  */
 exports.logout = (req, res) => {
   req.logout();
-  req.flash('success', { msg: 'Success! You are logged in.' });
+  req.flash('success', { msg: 'Success! You are logged out.' });
   res.redirect(req.baseUrl);
 };

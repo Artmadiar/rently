@@ -2,11 +2,11 @@ extends layout
 
 block content
   .page-header
-    h3 Search
+    h3 Posts
 
   .row
     .col.col-sm-8.col-sm-offset-2
-      form.form-horizontal(action="/search", method='GET')
+      form.form-horizontal(action="/backoffice/posts", method='GET')
         .input-group
           input.form-control(type='text', placeholder='e-mail | name | surname | adress', name='keyword')
           span.input-group-btn
