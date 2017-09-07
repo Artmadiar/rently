@@ -1,11 +1,11 @@
 extends layout
 
 block content
-  .page-header
-    h3 Posts
 
+  //- head
   .row
-    .col.col-sm-8.col-sm-offset-2
+    .col.col-sm-12
+      h3 Posts
       form.form-horizontal(action="/backoffice/posts", method='GET')
         .input-group
           input.form-control(type='text', placeholder='e-mail | name | surname | adress', name='keyword')
@@ -13,5 +13,69 @@ block content
             button.btn.btn-primary(type='submit')
               i.fa.fa-search
               | Search
-  .row
-    hr
+
+
+      //- pagination
+      nav(aria-label='Page navigation')
+        ul.pager
+          - n = 0;
+          while n < pages
+            - n++;
+            li
+              a(href='?page=' + n class=(page === n ? 'pager--active' : ''))=n
+
+
+
+  //- post list
+  .row(style='margin-top: 10px;')
+    .col.col-sm-12
+      each post, i in posts
+        //- post
+        .row(class='status-' + post.status)
+          .span12
+            .container
+              //- head
+              h4
+                strong
+                  a(href=`/backoffice/posts/${post.id}`)=`Post #${post.id}` + (post.type ? ` (${post.type})` : '')
+              //- caption
+              if post.caption
+                p=post.caption
+
+              //- fb link
+              p fb:
+                a(href='https://facebook.com/' + post.extId)='https://facebook.com/' + post.extId
+
+              //- attached url
+              if post.url.indexOf('facebook') === -1
+                p url:
+                  a(href=post.url)=post.url
+
+              //- attachments
+              if post.postAttachments && post.postAttachments.length > 0
+                .thumbnail(style='display: flex;')
+                  each pic,i in post.postAttachments
+                    if (i<7)
+                      img(src=pic.src, alt='picture' style='width:auto; height:100px;')
+
+              //- text
+              p=post.text
+
+              //- author and date
+              p
+                i.icon-user
+                |  by  
+                a(href='https://www.facebook.com/' + post.extUser.extId)=post.extUser.name
+                | 
+                i.icon-calendar=' ' + moment(post.extCreatedTime).format('DD-MM-YYYY hh:mm:ss')
+        br
+        hr
+
+      //- pagination
+      nav(aria-label='Page navigation')
+        ul.pager
+          - n = 0;
+          while n < pages
+            - n++;
+            li
+              a(href='posts?page=' + n class=(page === n ? 'pager--active' : ''))=n

@@ -69,18 +69,20 @@ textarea {
   margin-right: 6px;
 }
 
-// Added
-.input-group-addon {
-    min-width: 80px;
-    text-align: right;
+// statuses
+// ------------------------
+.status-open {
+  background-color: FFFFFF;
 }
 
-//Added for email details
-.button-email {
-  margin:5px;
+.status-applied {
+  background-color: rgb(171, 237, 205);
 }
 
-//for text on detail form
-.disabled-text {
-  color: #959595;
+.status-rejected {
+  background-color: #F3C4C4;
+}
+
+.pager--active {
+  font-weight: bold;
 }

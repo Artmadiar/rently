@@ -46,6 +46,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
+    status: {
+      type: DataTypes.ENUM('open', 'applied', 'rejected'),
+      allowNull: false,
+      defaultValue: 'open'
+    },
     originText: {
       type: DataTypes.TEXT,
       allowNull: false

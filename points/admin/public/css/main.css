@@ -8072,12 +8072,14 @@ textarea {
 .fa {
   margin-right: 6px; }
 
-.input-group-addon {
-  min-width: 80px;
-  text-align: right; }
+.status-open {
+  background-color: FFFFFF; }
 
-.button-email {
-  margin: 5px; }
+.status-applied {
+  background-color: #abedcd; }
 
-.disabled-text {
-  color: #959595; }
+.status-rejected {
+  background-color: #F3C4C4; }
+
+.pager--active {
+  font-weight: bold; }
