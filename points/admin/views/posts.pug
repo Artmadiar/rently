@@ -31,13 +31,14 @@ block content
     .col.col-sm-12
       each post, i in posts
         //- post
+        a(name=`post${post.id}`)
         .row(class='status-' + post.status)
           .span12
             .container
               //- head
               h4
                 strong
-                  a(href=`/backoffice/posts/${post.id}`)=`Post #${post.id}` + (post.type ? ` (${post.type})` : '')
+                  a(href=`javascript:openModal("Preview for post #${post.id}","/backoffice/posts/${post.id}?${query}")`)=`Post #${post.id}` + (post.type ? ` (${post.type})` : '')
               //- caption
               if post.caption
                 p=post.caption

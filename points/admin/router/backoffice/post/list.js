@@ -25,6 +25,7 @@ module.exports = (req, res, next) => {
   })
   .then((posts) => {
     res.locals.moment = moment;
+    res.locals.query = Object.keys(req.query).map(key => (`${key}=${req.query[key]}`)).join('&');
     res.render('posts', { posts });
   })
   .catch(err => next(err));

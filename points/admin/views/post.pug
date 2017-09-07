@@ -1,17 +1,56 @@
-extends layout
-
 block content
-  .page-header
-    h3 Post
-
-  .row
-    .col.col-sm-8.col-sm-offset-2
-      form.form-horizontal(action="/post", method='GET')
-        .input-group
-          input.form-control(type='text', placeholder='e-mail | name | surname | adress', name='keyword')
-          span.input-group-btn
-            button.btn.btn-primary(type='submit')
-              i.fa.fa-search
-              | Detail
-  .row
-    hr
+    form(method="POST" action=`/backoffice/posts/${post.id}?${query}`)
+      // Exmaple
+      .row
+        .col-md-6
+          .form-group
+            label.control-label(for='adType') Ad type
+            select#status.form-control(name='adType')
+              each adType in ['pronajem', 'spolubydleni', 'prodej']
+                if (post.adType === adType)
+                  option(value=adType selected)=adType
+                else
+                  option(value=adType)=adType
+        // Status
+        .col-md-6
+          .form-group
+            label.control-label(for='status') Status
+            select#status.form-control(name='status')
+              each status in ['open', 'applied', 'rejected']
+                if (post.status === status)
+                  option(value=status selected)=status
+                else
+                  option(value=status)=status
+        // Text input
+      .row
+        .col-md-6
+          .form-group
+            label.control-label(for='date') Preferred Date
+            input#date.form-control.input-md(name='date', type='text', placeholder='Preferred Date')
+        // Select Basic
+        .col-md-6
+          .form-group
+            label.control-label(for='time') Preferred Time
+            input.form-control(list="browsers" name="browser")
+            datalist#browsers
+              option(value="Internet Explorer")
+              option(value="Firefox")
+              option(value="Chrome")
+              option(value="Opera")
+              option(value="Safari")
+      // Select Basic
+      .row
+        .col-md-8
+          .form-group
+            label.control-label(for='appointmentfor') Appointment For
+            select#appointmentfor.form-control(name='appointmentfor')
+              option(value='Service#1') Service#1
+              option(value='Service#2') Service#2
+              option(value='Service#3') Service#3
+              option(value='Service#4') Service#4
+      // Button
+      .row
+        .col-md-8
+          .form-group
+            button#singlebutton.btn.btn-default(name='singlebutton' type="submit") Make An Appointment
+    // form end

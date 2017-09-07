@@ -10,7 +10,8 @@ module.exports = (req, res, next) => {
       throw new errors.NotFound('Post not found');
     }
     req.flash('success', { msg: 'Post was successfully saved.' });
-    return res.redirect(`${req.baseUrl}/backoffice/posts/${id}`);
+    const query = Object.keys(req.query).map(key => (`${key}=${req.query[key]}`)).join('&');
+    return res.redirect(`${req.baseUrl}?${query}`);
   })
   .catch(err => next(err));
 };
