@@ -1,5 +1,7 @@
 block content
     form(method="POST" action=`/backoffice/posts/${post.id}?${query}`)
+
+      input#postId(value=post.id type="hidden")
       // Exmaple
       .row
         .col-md-6
@@ -40,7 +42,7 @@ block content
               option(value="Safari")
       // Select Basic
       .row
-        .col-md-8
+        .col-md-6
           .form-group
             label.control-label(for='appointmentfor') Appointment For
             select#appointmentfor.form-control(name='appointmentfor')
@@ -52,5 +54,21 @@ block content
       .row
         .col-md-8
           .form-group
-            button#singlebutton.btn.btn-default(name='singlebutton' type="submit") Make An Appointment
+            button#singlebutton.btn.btn-default(name='singlebutton' type="button") Make An Appointment
     // form end
+
+    script.
+      $(document).ready(function() {
+
+        const postId = $('#postId').val();
+
+        //- set handler of submit
+        $('#singlebutton').on('click', function() {
+          const data = { postId };
+          //- send data by ajax
+          $.post(`/backoffice/posts/${postId}`, data, function(result){
+            console.log(result);
+          });
+        });
+
+      });

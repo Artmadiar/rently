@@ -1,5 +1,5 @@
 # Web
-> Rently back office side
+> Hommy back office side
 
 ## Getting started
 
