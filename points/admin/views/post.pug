@@ -2,59 +2,129 @@ block content
     form(method="POST" action=`/backoffice/posts/${post.id}?${query}`)
 
       input#postId(value=post.id type="hidden")
-      // Exmaple
       .row
+        // AdType
         .col-md-6
           .form-group
             label.control-label(for='adType') Ad type
-            select#status.form-control(name='adType')
-              each adType in ['pronajem', 'spolubydleni', 'prodej']
-                if (post.adType === adType)
-                  option(value=adType selected)=adType
+            select.form-control(name='adType')
+              each adType in adTypes
+                if (ad.adTypeId === adType.id)
+                  option(value=adType.id selected)=adType['nameCZ']
                 else
-                  option(value=adType)=adType
+                  option(value=adType.id)=adType['nameCZ']
         // Status
         .col-md-6
           .form-group
             label.control-label(for='status') Status
-            select#status.form-control(name='status')
-              each status in ['open', 'applied', 'rejected']
+            select.form-control(name='status')
+              each status in statuses
                 if (post.status === status)
                   option(value=status selected)=status
                 else
                   option(value=status)=status
-        // Text input
       .row
+        // Description
+        .col-md-12
+          .form-group
+            label.control-label(for='description') Description
+            br
+            textarea(name="description" style="width: 100%;" rows="5")
+              =post.text
+
+      .row
+        // Language
         .col-md-6
           .form-group
-            label.control-label(for='date') Preferred Date
-            input#date.form-control.input-md(name='date', type='text', placeholder='Preferred Date')
-        // Select Basic
+            label.control-label(for='language') Language
+            select.form-control(name='language')
+              each language in languages
+                if (ad.languageId === language.id)
+                  option(value=language.id selected)=language.name
+                else
+                  option(value=language.id)=language.name
+        // FlatType
         .col-md-6
           .form-group
-            label.control-label(for='time') Preferred Time
-            input.form-control(list="browsers" name="browser")
-            datalist#browsers
-              option(value="Internet Explorer")
-              option(value="Firefox")
-              option(value="Chrome")
-              option(value="Opera")
-              option(value="Safari")
-      // Select Basic
+            label.control-label(for='flatType') Flat Type
+            select.form-control(name='flatType')
+              each flatType in flatTypes
+                if (ad.flatTypeId === flatType.id)
+                  option(value=flatType.id selected)=flatType['nameCZ']
+                else
+                  option(value=flatType.id)=flatType['nameCZ']
+
+
+
       .row
+        // City
         .col-md-6
           .form-group
-            label.control-label(for='appointmentfor') Appointment For
-            select#appointmentfor.form-control(name='appointmentfor')
-              option(value='Service#1') Service#1
-              option(value='Service#2') Service#2
-              option(value='Service#3') Service#3
-              option(value='Service#4') Service#4
-      // Button
+            label.control-label(for='city') City
+            select.form-control(name='city')
+              option(value=0)=''
+              each city in cities
+                if (ad.cityId === city.id)
+                  option(value=city.id selected)=city['nameCZ']
+                else
+                  option(value=city.id)=city['nameCZ']
+        // District
+        .col-md-6
+          .form-group
+            label.control-label(for='district') District
+            input.form-control(list="city-0" name="district")
+            datalist#city-0
+
+            each city in cities
+              datalist(id=`city-${city.id}`)
+                each listDistrict in city.districts
+                  if (listDistrict === district)
+                    option(value=district['nameCZ'] selected)
+                  else
+                    option(value=district['nameCZ'])
+    
       .row
+        // Street
         .col-md-8
           .form-group
-            button#singlebutton.btn.btn-default(name='singlebutton' type="button") Make An Appointment
+            label.control-label(for='street') Street
+            input.form-control(type="text" name='street' value=ad.street)
+        // HouseNumber
+        .col-md-2
+          .form-group
+            label.control-label(for='houseNumber') House
+            input.form-control(type="text" name='houseNumber' value=ad.houseNumber)
+        // ZipCode
+        .col-md-2
+          .form-group
+            label.control-label(for='zipCode') Zip Code
+            input.form-control(type="text" name='zipCode' value=ad.zipCode)
+
+      .row
+        // Area
+        .col-md-6
+          .form-group
+            label.control-label(for='area') Area
+            input.form-control(type="number" name='area' value=ad.area step='0.1')
+
+      .row
+        // Price
+        .col-md-6
+          .form-group
+            label.control-label(for='adType') Price
+            input.form-control(type="number" name='price' value=ad.price)
+        // comPayment
+        .col-md-6
+          .form-group
+            label.control-label(for='comPayment') Comunal payment
+            input.form-control(type="number" name='comPayment' value=ad.comPayment)
+
+      // Button
+      .row
+        .col-md-12
+          .form-group(style="text-align: center;")
+            button.btn.btn-primary(name='approve' type="button") Approve
+            button.btn.btn-danger(name='reject' type="button") Reject
     // form end
 
     script.
@@ -62,12 +132,49 @@ block content
 
         const postId = $('#postId').val();
 
-        //- set handler of submit
-        $('#singlebutton').on('click', function() {
+        //- city handler for district-list
+        $('[name="city"]').on('change', function() {
+          $('[name="district"]').attr('list', `city-${$(this).val()}`);
+        });
+        $('[name="district"]').attr('list', `city-${$('[name="city"]').val() || 0}`);
+
+        //- set handler of submit APPROVE
+        $('[name="approve"]').on('click', function() {
+          const data = {
+            postId,
+            languageId: $('[name="language"]').val(),
+            adTypeId: $('[name="adType"]').val(),
+            cityId: $('[name="city"]').val(),
+            district: $('[name="district"]').val(),
+            zipCode: $('[name="zipCode"]').val(),
+            street: $('[name="street"]').val(),
+            houseNumber: $('[name="houseNumber"]').val(),
+            flatTypeId: $('[name="flatType"]').val(),
+            price: $('[name="price"]').val(),
+            comPayment: $('[name="comPayment"]').val(),
+            area: $('[name="area"]').val(),
+            description: $('[name="description"]').val(),
+          };
+          //- send data by ajax
+          $.post(`/backoffice/posts/approve`, data, function(result){
+            console.log(result);
+
+            if (result.success) {
+              $('#modal').modal('hide');
+            }
+          });
+        });
+
+        //- set handler of submit REJECT
+        $('[name="reject"]').on('click', function() {
           const data = { postId };
           //- send data by ajax
-          $.post(`/backoffice/posts/${postId}`, data, function(result){
+          $.post(`/backoffice/posts/reject`, data, function(result){
             console.log(result);
+
+            if (result.success) {
+              $('#modal').modal('hide');
+            }
           });
         });
 

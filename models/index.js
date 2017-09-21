@@ -65,6 +65,26 @@ module.exports = () => {
   db.post.hasMany(db.postAttachment);
   db.postAttachment.belongsTo(db.post);
 
+  db.city.hasMany(db.district);
+  db.district.belongsTo(db.city);
+
+  // ad
+  db.post.hasOne(db.ad);
+  db.ad.belongsTo(db.post);
+
+  db.language.hasOne(db.ad);
+  db.ad.belongsTo(db.language);
+
+  db.city.hasOne(db.ad);
+  db.ad.belongsTo(db.city);
+
+  db.district.hasOne(db.ad);
+  db.ad.belongsTo(db.district);
+
+  db.flatType.hasOne(db.ad);
+  db.ad.belongsTo(db.flatType);
+
+
   db.sequelize.sync().catch((err) => {
     throw err;
   });
