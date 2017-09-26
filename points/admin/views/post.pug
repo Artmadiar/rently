@@ -72,16 +72,14 @@ block content
         .col-md-6
           .form-group
             label.control-label(for='district') District
-            input.form-control(list="city-0" name="district")
-            datalist#city-0
-
-            each city in cities
-              datalist(id=`city-${city.id}`)
-                each listDistrict in city.districts
-                  if (listDistrict === district)
-                    option(value=district['nameCZ'] selected)
-                  else
-                    option(value=district['nameCZ'])
+            select.form-control(name='district')
+              option(value=0)=''
+              each city in cities
+                each cityDistrict in city.districts
+                    if (ad.districtId === cityDistrict.id)
+                      option.districtOption(value=cityDistrict.id data-city-id=city.id selected)=cityDistrict['nameCZ']
+                    else
+                      option.districtOption(value=cityDistrict.id  data-city-id=city.id)=cityDistrict['nameCZ']
     
       .row
         // Street
@@ -132,11 +130,21 @@ block content
 
         const postId = $('#postId').val();
 
+        function setDistrictList() {
+          const currentCityId = $('[name="city"]').val();
+          $('.districtOption').each((i, el) => {
+            const cityId = el.attributes['data-city-id'] === undefined ? 0 : el.attributes['data-city-id'].value;
+            console.log('each__district__id', cityId);
+            console.log('current city id', currentCityId);
+            $(el).css('display', (cityId === currentCityId) ? 'inherit' : 'none');
+          });
+        }
         //- city handler for district-list
         $('[name="city"]').on('change', function() {
-          $('[name="district"]').attr('list', `city-${$(this).val()}`);
+          $('[name="district"]').val('0');
+          setDistrictList();
         });
-        $('[name="district"]').attr('list', `city-${$('[name="city"]').val() || 0}`);
+        setDistrictList();
 
         //- set handler of submit APPROVE
         $('[name="approve"]').on('click', function() {
