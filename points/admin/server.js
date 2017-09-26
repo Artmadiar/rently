@@ -76,5 +76,16 @@ app.listen(app.get('port'), () => {
   console.log('[RUNNING] PORT: %d MODE: %s TIME: %s', app.get('port'), app.get('env'), Date());
 });
 
+/**
+ * GRABBER
+ */
+const grab = require('./../grabber');
+
+let i = 0;
+const interval = setInterval(() => {
+  i += 1;
+  grab();
+  console.log(i);
+}, 5000);
 
 module.exports = app;
